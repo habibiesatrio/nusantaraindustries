@@ -6,6 +6,24 @@ You must perform the final steps in your own local terminal.
 
 Please follow these instructions exactly:
 
+## Step 0: Fix Git Pull Error
+
+You have a `git pull` error because of a file I created by mistake. Please fix it by following these two sub-steps.
+
+### A. Delete the Conflicting File
+
+In your project's root directory, you will find a file named `.htaccess`. Please **delete** this file. It is safe to delete.
+
+### B. Pull the Latest Code
+
+After deleting the file, run this command in your terminal:
+
+```bash
+git pull
+```
+
+This should now work without errors. Once you have successfully pulled the code, please proceed to the next steps.
+
 ## Step 1: Install Dependencies
 
 Open your terminal in the project folder and run this command. This is necessary to fix dependency issues with React 19.

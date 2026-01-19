@@ -5,11 +5,13 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import PatentManagement from './PatentManagement';
 import PublicationManagement from './PublicationManagement';
+const getConnection = require('./Database');
 
 const DataManagement = () => {
   const [data, setData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
   const [file, setFile] = useState(null);
+  const [sqlFile, setSqlFile] = useState(null);
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('pohonIndustri'); // 'pohonIndustri', 'paten', or 'publication'
@@ -72,6 +74,14 @@ const DataManagement = () => {
             console.error("Error reading file:", e.target.error);
         };
         reader.readAsText(selectedFile);
+    }
+  };
+
+  const handleSqlFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+        setSqlFile(selectedFile);
+        setNotification({ message: 'SQL file selected. Ready to import.', type: 'info' });
     }
   };
   
@@ -137,6 +147,37 @@ const DataManagement = () => {
           alert(`Error updating database: ${error.message}`);
           console.error("Error committing batch: ", error);
       }
+    };
+
+    const handleSqlImport = () => {
+        if (!sqlFile) {
+            setNotification({ message: 'No SQL file selected.', type: 'warning' });
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const sql = event.target.result;
+            const connection = getConnection();
+            connection.connect((err) => {
+                if (err) {
+                    console.error('Error connecting to database:', err);
+                    setNotification({ message: `Error connecting to database: ${err.message}`, type: 'error' });
+                    return;
+                }
+                connection.query(sql, (error, results) => {
+                    if (error) {
+                        console.error('Error importing SQL:', error);
+                        setNotification({ message: `Error importing SQL: ${error.message}`, type: 'error' });
+                        connection.end();
+                        return;
+                    }
+                    setNotification({ message: 'SQL database imported successfully!', type: 'success' });
+                    connection.end();
+                });
+            });
+        };
+        reader.readAsText(sqlFile);
     };
   const exportToJSON = () => {
     if (data.length === 0) {
@@ -276,6 +317,19 @@ const DataManagement = () => {
                     </button>
                     <button onClick={exportToJSON} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Export Data (JSON)
+                    </button>
+                    <div>
+                        <label htmlFor="sql-upload" className="cursor-pointer bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+                            Choose SQL File
+                        </label>
+                        <input id="sql-upload" type="file" accept=".sql" className="hidden" onChange={handleSqlFileChange} />
+                    </div>
+                    <button 
+                        onClick={handleSqlImport} 
+                        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded disabled:bg-teal-300 disabled:cursor-not-allowed"
+                        disabled={!sqlFile}
+                    >
+                        Import SQL
                     </button>
                 </div>
                 {file && (

@@ -2,6 +2,7 @@
     "name": "pohon-industri",
     "version": "1.0.0",
     "description": "Landing page for Pohon Industri Indonesia - BRIN Portal",
+    "homepage": ".",
     "main": "index.js",
     "scripts": {
         "start": "react-scripts start",

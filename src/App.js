@@ -13,10 +13,9 @@ import PetaPotensi from './PetaPotensi';
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/daftar" element={<Daftar />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/data-management" element={<DataManagement />} />
             <Route path="/pohon-industri" element={<PohonIndustri />} />

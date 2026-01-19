@@ -1,6 +1,6 @@
 # Pohon Industri Indonesia
 
-Landing page untuk portal Pohon Industri Indonesia yang dikembangkan oleh BRIN (Badan Riset dan Inovasi Nasional).
+Landing page untuk portal Pohon Industri Indonesia yang dikembangkan oleh BRIN (Badan Riset dan Inovasi Nasional)..
 
 ## Deskripsi
 

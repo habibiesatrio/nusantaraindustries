@@ -40,6 +40,29 @@ Aplikasi web ini menyediakan tracer hilirisasi komoditas nasional, memetakan poh
 npm run build
 ```
 
+## Deployment
+
+Setelah proses build selesai, folder `build` akan berisi semua file yang siap untuk di-deploy.
+
+Untuk men-deploy aplikasi ke hosting seperti Hostinger, ikuti langkah berikut:
+
+1.  **Pastikan `.htaccess` ada**: File `public/.htaccess` yang sudah dibuat akan otomatis tercopy ke dalam folder `build` saat proses build. File ini penting agar routing di sisi klien (client-side routing) berfungsi dengan benar di server.
+2.  **Upload ke Server**: Unggah **semua isi** dari folder `build` lokal Anda ke direktori `public_html` di server hosting Anda. Jangan unggah folder `build` itu sendiri, tetapi hanya isinya.
+
+Struktur file di `public_html` server Anda akan terlihat seperti ini:
+
+```
+public_html/
+├── static/
+├── asset-manifest.json
+├── index.html
+├── manifest.json
+├── .htaccess
+└── ... file lainnya
+```
+
+Setelah semua file diunggah, website Anda seharusnya sudah bisa diakses dan semua halaman akan berfungsi dengan benar.
+
 ## Dataset
 
 Data komoditas didasarkan pada "Kompilasi Pohon Industri 2025" dari BRIN, mencakup:

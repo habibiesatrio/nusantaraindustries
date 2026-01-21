@@ -18,7 +18,7 @@ import {
   Legend,
   Cell
 } from 'recharts';
-import { EXPORT_DATA } from '../constants';
+import { EXPORT_DATA } from '../../constants';
 
 const StatsCard: React.FC<{ 
   title: string, 

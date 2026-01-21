@@ -15,8 +15,8 @@ import {
   Target,
   BarChart3
 } from 'lucide-react';
-import { COMMODITIES, PSN_PROJECTS } from '../constants';
-import { CommodityData } from '../types';
+import { COMMODITIES, PSN_PROJECTS } from '../../constants';
+import { CommodityData } from '../../types';
 
 interface LandingPageProps {
   onStartTracking: () => void;

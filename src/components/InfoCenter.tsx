@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NEWS_ITEMS } from '../constants';
+import { NEWS_ITEMS } from '../../constants';
 import { Calendar, Tag, ChevronRight, Download } from 'lucide-react';
 
 const InfoCenter: React.FC = () => {

@@ -1,0 +1,8 @@
+
+{
+  "name": "Nusantara Industries - Pusat Data Hilirisasi Nasional",
+  "description": "Platform pusat data hilirisasi industri nasional yang menyediakan visualisasi data ekspor-impor, kebijakan hilirisasi, dan analisis industri berbasis AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import InfoCenter from './components/InfoCenter';
-import AIConsultant from './components/AIConsultant';
-import Login from './components/Login';
-import LandingPage from './components/LandingPage';
-import { Page } from './types';
+import Sidebar from './components/Sidebar.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import InfoCenter from './components/InfoCenter.tsx';
+import AIConsultant from './components/AIConsultant.tsx';
+import Login from './components/Login.tsx';
+import LandingPage from './components/LandingPage.tsx';
+import { Page } from './types.ts';
 import { Bell, Search, User, Globe } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -39,7 +39,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Views that don't need sidebar/dashboard layout
   if (currentPage === Page.Landing) {
     return <LandingPage onStartTracking={startTracking} onLogin={goToLogin} />;
   }
@@ -96,7 +95,6 @@ const App: React.FC = () => {
       />
       
       <main className="flex-1 ml-64 min-h-screen flex flex-col">
-        {/* Modern Header */}
         <header className="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-40 px-10 flex items-center justify-between">
           <div className="relative w-full max-w-lg">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -125,7 +123,6 @@ const App: React.FC = () => {
           </div>
         </header>
 
-        {/* Page Content Container */}
         <div className="p-10 max-w-[1600px] w-full mx-auto flex-1">
           {renderContent()}
         </div>

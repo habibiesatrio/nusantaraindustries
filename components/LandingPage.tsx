@@ -70,11 +70,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartTracking, onLogin }) =
           </div>
           <span className="font-bold text-xl tracking-tight text-blue-900">Nusantara Industries</span>
         </div>
-        <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-500">
-          <a href="#beranda" className="hover:text-blue-600 transition-colors">Beranda</a>
-          <a href="#tracking" className="hover:text-blue-600 transition-colors">Data Tracking</a>
-          <a href="#tentang" className="hover:text-blue-600 transition-colors">Tentang Hilirisasi</a>
-        </div>
+
         <div className="flex items-center gap-4">
           <button 
             onClick={onLogin}

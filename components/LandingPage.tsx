@@ -15,8 +15,8 @@ import {
   Target,
   BarChart3
 } from 'lucide-react';
-import { COMMODITIES, PSN_PROJECTS } from '../constants';
-import { CommodityData } from '../types';
+import { COMMODITIES, PSN_PROJECTS } from '@/constants';
+import { CommodityData } from '@/types';
 
 interface LandingPageProps {
   onStartTracking: () => void;
@@ -52,12 +52,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartTracking, onLogin }) =
             className="text-sm font-bold text-blue-900 hover:text-blue-700 transition-colors"
           >
             Portal Login
-          </button>
-          <button 
-            onClick={onStartTracking}
-            className="bg-blue-900 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-blue-800 transition-all shadow-xl shadow-blue-900/10 active:scale-95"
-          >
-            Mulai Melacak
           </button>
         </div>
       </nav>

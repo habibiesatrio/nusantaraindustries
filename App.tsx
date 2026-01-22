@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar.tsx';
+import { Sidebar } from './components/Sidebar.tsx';
 import Dashboard from './components/Dashboard.tsx';
 import InfoCenter from './components/InfoCenter.tsx';
 import AIConsultant from './components/AIConsultant.tsx';

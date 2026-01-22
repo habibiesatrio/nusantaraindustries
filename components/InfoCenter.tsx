@@ -3,6 +3,15 @@ import React from 'react';
 import { NEWS_ITEMS } from '../constants';
 import { Calendar, Tag, ChevronRight, Download } from 'lucide-react';
 
+interface NewsItem {
+  id: string;
+  imageUrl: string;
+  title: string;
+  category: string;
+  date: string;
+  summary: string;
+}
+
 const InfoCenter: React.FC = () => {
   return (
     <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
@@ -18,7 +27,9 @@ const InfoCenter: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {NEWS_ITEMS.map((news) => (
+
+
+        {NEWS_ITEMS.map((news: NewsItem) => (
           <div key={news.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 group cursor-pointer transition-all hover:shadow-md hover:-translate-y-1">
             <div className="relative h-48">
               <img src={news.imageUrl} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

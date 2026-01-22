@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   LayoutDashboard, 
@@ -16,7 +15,7 @@ interface SidebarProps {
   onLogout: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentPage, setPage, onLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setPage, onLogout }) => {
   const menuItems = [
     { id: Page.Dashboard, icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { id: Page.ExportImport, icon: <BarChart3 size={20} />, label: 'Data Ekspor Impor' },
@@ -69,4 +68,3 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, setPage, onLogout }) => 
   );
 };
 
-export default Sidebar;

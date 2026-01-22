@@ -1,5 +1,5 @@
 
-import { GoogleGenerativeAI, GenerationConfig, Content } from "@google/genai";
+import { GoogleGenerativeAI, GenerationConfig, Content } from "@google/generative-ai";
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI;

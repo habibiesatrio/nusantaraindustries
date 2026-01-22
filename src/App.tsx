@@ -6,7 +6,7 @@ import InfoCenter from './components/InfoCenter';
 import AIConsultant from './components/AIConsultant';
 import Login from './components/Login';
 import LandingPage from './components/LandingPage';
-import { Page } from '@/types';
+import { Page } from '@/src/types';
 import { Bell, Search, User, Globe } from 'lucide-react';
 
 const App: React.FC = () => {

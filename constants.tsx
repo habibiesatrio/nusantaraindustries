@@ -1,5 +1,5 @@
 
-import { CommodityData, PSNProject } from './types';
+import { CommodityData, PSNProject } from './src/types';
 
 export const COMMODITIES: CommodityData[] = [
   {

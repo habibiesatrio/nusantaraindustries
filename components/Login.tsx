@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { Mail, Lock, LogIn, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, LogIn, ShieldCheck, LayoutDashboard } from 'lucide-react';
 
 interface LoginProps {
   onLogin: () => void;
-  onBack: () => void;
+  onGoToDashboard: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onGoToDashboard }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,10 +59,11 @@ const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
         <div className="max-w-md w-full">
           <div className="relative text-center mb-10">
             <button 
-              onClick={onBack} 
-              className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-12 h-12 bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+              onClick={onGoToDashboard} 
+              className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center px-4 h-12 bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
             >
-              <ArrowLeft className="text-slate-600" size={20} />
+              <LayoutDashboard className="text-slate-600" size={20} />
+              <span className="ml-2 text-sm font-bold text-slate-600">Dashboard</span>
             </button>
             <div className="lg:hidden flex justify-center mb-6">
               <div className="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center text-white">

@@ -1,4 +1,5 @@
 
+/* Versi Update: 1.0.1 - Navbar Clean */
 import React, { useState } from 'react';
 import { 
   ArrowRight, 
@@ -33,7 +34,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartTracking, onLogin }) =
 
   return (
     <div className="bg-white min-h-screen text-slate-900 selection:bg-blue-100 selection:text-blue-900">
-      {/* Navbar */}
+      {/* Navbar - Hanya ada Portal Login di sebelah kanan */}
       <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-blue-900 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/20">
@@ -41,11 +42,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartTracking, onLogin }) =
           </div>
           <span className="font-bold text-xl tracking-tight text-blue-900">Nusantara Industries</span>
         </div>
+        
         <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-slate-500">
           <a href="#beranda" className="hover:text-blue-600 transition-colors">Beranda</a>
           <a href="#tracking" className="hover:text-blue-600 transition-colors">Data Tracking</a>
           <a href="#tentang" className="hover:text-blue-600 transition-colors">Tentang Hilirisasi</a>
         </div>
+
         <div className="flex items-center gap-4">
           <button 
             onClick={onLogin}

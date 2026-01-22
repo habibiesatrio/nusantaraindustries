@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { db } from './firebase';
+import { db } from '../services/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import ReactFlow, { Background, Controls, useNodesState, useEdgesState } from 'reactflow';

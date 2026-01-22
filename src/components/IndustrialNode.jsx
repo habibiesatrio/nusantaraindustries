@@ -68,10 +68,16 @@ const IndustrialNode = ({ data }) => {
                       <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100 text-center">
                           <p className="text-[7px] font-black text-emerald-600 uppercase">Ekspor</p>
                           <p className="text-[10px] font-black text-emerald-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">${Number(data.Downstream_Export).toLocaleString()}</p>
+                          <p className="text-[7px] text-gray-500 mt-2 italic">
+                            *Dihitung dari akumulasi {Number(data.Export_Countries)} negara pelapor di dunia
+                          </p>
                       </div>
                       <div className="p-2 bg-red-50 rounded-xl border border-red-100 text-center">
                           <p className="text-[7px] font-black text-red-600 uppercase">Impor</p>
                           <p className="text-[10px] font-black text-red-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">${Number(data.Downstream_Import).toLocaleString()}</p>
+                          <p className="text-[7px] text-gray-500 mt-2 italic">
+                            *Dihitung dari akumulasi {Number(data.Import_Countries)} negara pelapor di dunia
+                          </p>
                       </div>
                   </div>
                   <div className="p-2.5 bg-slate-900 rounded-xl shadow-inner text-center">

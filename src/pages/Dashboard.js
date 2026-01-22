@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { rtdb } from './firebase';
+import { rtdb } from '../services/firebase';
 import { ref, onValue } from 'firebase/database';
 import {
     Database,
@@ -76,9 +76,10 @@ const Dashboard = () => {
     useEffect(() => {
         if (user && activeDashTab === 'hilirisasi') {
             setLoading(true);
-            const dbRef = ref(rtdb, '/');
+            const dbRef = ref(rtdb, '/produk/');
             const unsubscribe = onValue(dbRef, (snapshot) => {
                 const data = snapshot.val();
+                console.log("Fetched hilirisasi data from RTDB:", data);
                 if (data) {
                     const formatted = (Array.isArray(data)
                         ? data.filter(i => i !== null)
@@ -176,6 +177,7 @@ const Dashboard = () => {
                     <NavItem active={false} onClick={() => navigate('/data-management')} icon={<Database size={18} />} label="Manajemen Data" />
                     <NavItem active={false} onClick={() => navigate('/pohon-industri')} icon={<GitMerge size={18} />} label="Pohon Industri" />
                     <NavItem active={false} onClick={() => navigate('/peta-potensi')} icon={<Sheet size={18} />} label="Peta Potensi" />
+                    <NavItem active={false} onClick={() => navigate('/market-analysis')} icon={<Zap size={18} />} label="Analisis Pasar" />
                 </nav>
                 <div className="mt-auto pt-6 border-t border-slate-50">
                      <div onClick={() => navigate('/profile')} className="flex items-center gap-3 p-3 bg-slate-50 rounded-2xl mb-4 cursor-pointer hover:bg-slate-100 transition-colors">
@@ -260,7 +262,7 @@ const Dashboard = () => {
                 )}
                 {activeDashTab === 'paten' && <AnalitikPaten />}
                 {activeDashTab === 'sektoral' && <div className="bg-white p-8 rounded-2xl"><h2 className="font-bold text-xl">Data Sektoral</h2><p>Content for this tab goes here.</p></div>}
-
+                {activeDashTab === 'market-analysis' && <MarketAnalysis />}
             </main>
         </div>
     );

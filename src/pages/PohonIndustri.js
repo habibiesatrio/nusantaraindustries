@@ -12,18 +12,31 @@ import 'reactflow/dist/style.css';
 
 // ENGINE: Menggunakan Realtime Database
 import { ref, onValue } from 'firebase/database';
-import { rtdb } from './firebase'; 
+import { rtdb } from '../services/firebase'; 
 
 import { Link, useNavigate } from 'react-router-dom';
 import { 
     GitMerge, LayoutDashboard, Search, X, 
     ArrowUp, ArrowDown, Database, LogOut, 
-    Bell, Settings, Download 
+    Bell, Settings, Download, Loader2
 } from 'lucide-react';
 
-import IndustrialNode from './IndustrialNode';
+import { getSumMarketValue, sanitizeHSCode, isValidHSCode } from '../services/comtradeService';
+
+import IndustrialNode from '../components/IndustrialNode';
+
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const marketCache = new Map();
 
 const nodeTypes = { industrial: IndustrialNode };
+
+const LoadingSpinner = () => (
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] bg-white/80 p-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-100">
+        <Loader2 className="w-6 h-6 text-sky-600 animate-spin" />
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Syncing Comtrade...</span>
+    </div>
+);
 
 // --- KOMPONEN ZOOM INDICATOR ---
 const ZoomDisplay = () => {
@@ -45,6 +58,7 @@ const PohonIndustriContent = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [selectedPopUp, setSelectedPopUp] = useState(null);
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     // 1. ENGINE: Sinkronisasi User & RTDB
     useEffect(() => {
@@ -55,7 +69,7 @@ const PohonIndustriContent = () => {
             setUser(JSON.parse(userData));
         }
 
-        const dbRef = ref(rtdb, '/'); 
+        const dbRef = ref(rtdb, '/produk/'); 
         return onValue(dbRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -73,12 +87,88 @@ const PohonIndustriContent = () => {
     };
 
     // --- ENGINE: LOGIKA INTERAKSI & LAYOUTING ---
-    const onToggleExpand = useCallback((id) => {
-        setNodes(nds => nds.map(node => ({
-            ...node,
-            data: { ...node.data, isExpanded: node.id === id ? !node.data.isExpanded : false }
-        })));
-    }, [setNodes]);
+    const onToggleExpand = useCallback(async (id) => {
+        // setNodes(nds => nds.map(node => ({
+        //     ...node,
+        //     data: { ...node.data, isExpanded: node.id === id ? !node.data.isExpanded : false }
+        // })));
+        let currentTargetNode = null;
+        setNodes((nds) => {
+            currentTargetNode = nds.find(n => n.id === id);
+            return nds; 
+        });
+
+        console.log("Toggling expand for node:", id, currentTargetNode);
+        if (!currentTargetNode) return;
+
+        // Jika akan expand (membuka)
+        if (!currentTargetNode.data.isExpanded) {
+            setIsLoading(true);
+            try {
+                // Eksekusi API Call secara paralel untuk efisiensi (Standard Enterprise)
+                const cleanHS = sanitizeHSCode(id);
+                const cacheKey = `${cleanHS}_2024`;
+
+                if (!isValidHSCode(cleanHS)) {
+                    console.error(`Invalid HS Code format: ${cleanHS} (Source: ${id})`);
+                    // Tetap expand kotak untuk menunjukkan detail lokal, tapi jangan fetch API
+                    updateNodeState(id, true, { 
+                        Downstream_Export: 0, 
+                        Downstream_Import: 0,
+                        error: "Format HS Code tidak valid untuk API" 
+                    });
+                    return;
+                }
+                
+                if (marketCache.has(cacheKey)) {
+                    const cachedData = marketCache.get(cacheKey);
+                    setNodes((nds) => nds.map(n => n.id === id ? { ...n, data: { ...n.data, isExpanded: true, ...cachedData }} : n));
+                    return;
+                }
+
+                console.log(`Fetching market data for sanitized HS: ${cleanHS}`);
+
+                const exportRes = await getSumMarketValue(cleanHS, '2024', 'X');
+
+                await wait(1100);
+
+                const importRes = await getSumMarketValue(cleanHS, '2024', 'M');
+
+                const marketUpdate = {
+                    Downstream_Export: exportRes?.totalValueUSD || 0,
+                    Downstream_Import: importRes?.totalValueUSD || 0,
+                    Export_Countries: exportRes?.totalCountries || 0,
+                    Import_Countries: importRes?.totalCountries || 0,
+                };
+
+                marketCache.set(cacheKey, marketUpdate);
+
+                setNodes((nds) => nds.map((node) => {
+                    if (node.id === id) {
+                        return {
+                            ...node,
+                            data: { 
+                                ...node.data, 
+                                isExpanded: true,
+                                ...marketUpdate
+                            }
+                        };
+                    }
+                    // Menutup node lain (Optional: Accordion Style)
+                    return { ...node, data: { ...node.data, isExpanded: false } };
+                }));
+            } catch (err) {
+                console.error("Gagal sinkronisasi data market:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            // Jika akan collapse (menutup)
+            setNodes((nds) => nds.map((node) => 
+                node.id === id ? { ...node, data: { ...node.data, isExpanded: false }} : node
+            ));
+        }
+    }, [setNodes, nodes, allData]);
 
     const onHideChildren = useCallback((id) => {
         setEdges((eds) => {
@@ -258,6 +348,7 @@ const PohonIndustriContent = () => {
                 </header>
 
                 <div className="flex-1 bg-white relative overflow-hidden font-sans">
+                    {isLoading && <LoadingSpinner />}
                     <ReactFlow 
                         nodes={nodes} edges={edges} onNodesChange={onNodesChange} 
                         nodeTypes={nodeTypes} fitView

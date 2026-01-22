@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase';
+import { db } from '../services/firebase';
 import { collection, getDocs, doc, writeBatch } from 'firebase/firestore';
 
-const PublicationManagement = () => {
+const PatentManagement = () => {
   const [data, setData] = useState([]);
   const [previewData, setPreviewData] = useState([]);
   const [file, setFile] = useState(null);
@@ -34,7 +34,7 @@ const PublicationManagement = () => {
 
   const fetchData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "publications"));
+      const querySnapshot = await getDocs(collection(db, "patents"));
       const dataList = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -110,8 +110,8 @@ const PublicationManagement = () => {
   
       const batch = writeBatch(db);
       previewData.forEach((row) => {
-          const docId = row.NO ? String(row.NO) : doc(collection(db, "publications")).id;
-          const docRef = doc(db, "publications", docId);
+          const docId = row.NO ? String(row.NO) : doc(collection(db, "patents")).id;
+          const docRef = doc(db, "patents", docId);
           batch.set(docRef, row);
       });
   
@@ -140,7 +140,7 @@ const PublicationManagement = () => {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', 'publications_data.json');
+    link.setAttribute('download', 'patents_data.json');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -184,14 +184,14 @@ const PublicationManagement = () => {
   return (
       <>
         <div className="bg-white p-6 rounded-lg shadow mb-6">
-            <h2 className="text-xl font-bold mb-4">Import & Export Publikasi</h2>
-            <p className="mb-4 text-sm text-gray-600">Upload a CSV or JSON file to update the 'publications' database.</p>
+            <h2 className="text-xl font-bold mb-4">Import & Export Paten</h2>
+            <p className="mb-4 text-sm text-gray-600">Upload a CSV or JSON file to update the 'patents' database.</p>
             <div className="flex space-x-4 items-center">
                 <div>
-                    <label htmlFor="file-upload-publication" className="cursor-pointer bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded">
+                    <label htmlFor="file-upload-patent" className="cursor-pointer bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded">
                         Choose File (CSV/JSON)
                     </label>
-                    <input id="file-upload-publication" type="file" accept=".csv,.json" className="hidden" onChange={handleFileChange} />
+                    <input id="file-upload-patent" type="file" accept=".csv,.json" className="hidden" onChange={handleFileChange} />
                 </div>
                 <button 
                     onClick={handleImport} 
@@ -215,9 +215,9 @@ const PublicationManagement = () => {
             </div>
         )}
 
-        {renderTable(data, "Data from Firestore 'publications'")}
+        {renderTable(data, "Data from Firestore 'patents'")}
     </>
   );
 };
 
-export default PublicationManagement;
+export default PatentManagement;

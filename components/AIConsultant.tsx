@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Loader2, Sparkles } from 'lucide-react';
-import { geminiService } from '@/services/geminiService';
+import { geminiService } from '../services/geminiService';
 
 interface Message {
   role: 'user' | 'ai';

@@ -18,7 +18,7 @@ import {
   Legend,
   Cell
 } from 'recharts';
-import { EXPORT_DATA } from '../constants';
+import { EXPORT_DATA } from '@/constants';
 
 const StatsCard: React.FC<{ 
   title: string, 
@@ -41,6 +41,12 @@ const StatsCard: React.FC<{
     <p className="text-2xl font-bold text-slate-900">{value}</p>
   </div>
 );
+
+interface ExportData {
+  name: string;
+  rawExport: number;
+  processedExport: number;
+}
 
 const Dashboard: React.FC = () => {
   return (
@@ -110,7 +116,7 @@ const Dashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <h3 className="text-lg font-bold text-slate-900 mb-6">Distribusi Komoditas</h3>
           <div className="space-y-6">
-            {EXPORT_DATA.slice(0, 4).map((item, idx) => (
+            {EXPORT_DATA.slice(0, 4).map((item: ExportData, idx: number) => (
               <div key={idx}>
                 <div className="flex justify-between text-sm mb-2">
                   <span className="font-medium text-slate-700">{item.name}</span>

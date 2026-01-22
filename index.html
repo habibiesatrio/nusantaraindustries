@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nusantara Industries | Pusat Data Hilirisasi Nasional</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Babel Standalone untuk menjalankan TSX di Browser (Cocok untuk File Manager/Direct Upload) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .gradient-blue { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
+        .text-gradient { 
+            background: linear-gradient(to right, #2563eb, #1e3a8a); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        /* Fix for potential white screen during load */
+        #root:empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #f8fafc;
+        }
+    </style>
+
+    <!-- Import Map untuk ESM -->
+    <script type="importmap">
+    {
+      "imports": {
+        "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "recharts": "https://esm.sh/recharts@^3.6.0",
+        "@google/genai": "https://esm.sh/@google/genai@^1.37.0"
+      }
+    }
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root">
+        <!-- Loading State sebelum React Render -->
+        <div class="flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-blue-900 font-bold animate-pulse">Memuat Nusantara Industries...</p>
+        </div>
+    </div>
+
+    <!-- Script Entry Point - Menggunakan data-type="module" dan type="text/babel" -->
+    <script type="text/babel" data-type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,26 +1,38 @@
 
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI, GenerationConfig, Content } from "@google/genai";
 
 export class GeminiService {
-  /**
-   * Mengambil wawasan terkait hilirisasi industri menggunakan Gemini AI.
-   * Mengikuti pedoman terbaru SDK @google/genai.
-   */
-  async getHilirisasiInsights(prompt: string) {
+  private genAI: GoogleGenerativeAI;
+
+  constructor(apiKey: string) {
+    this.genAI = new GoogleGenerativeAI(apiKey);
+  }
+
+  async getHilirisasiInsights(prompt: string): Promise<string> {
     try {
-      // Inisialisasi klien tepat sebelum panggilan API untuk memastikan penggunaan kunci API terbaru.
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
-      
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-        config: {
-          systemInstruction: "Anda adalah pakar ekonomi industri Indonesia spesialis hilirisasi. Berikan analisis mendalam, data-driven, namun mudah dipahami. Fokus pada nilai tambah, penyerapan tenaga kerja, dan dampak makroekonomi."
-        }
+      const model = this.genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash-latest",
+        systemInstruction: "Anda adalah pakar ekonomi industri Indonesia spesialis hilirisasi. Berikan analisis mendalam, data-driven, namun mudah dipahami. Fokus pada nilai tambah, penyerapan tenaga kerja, dan dampak makroekonomi."
       });
 
-      // Mengakses teks langsung dari properti .text sesuai pedoman (bukan method call).
-      return response.text || "Maaf, tidak ada analisis yang dapat dihasilkan.";
+      const generationConfig: GenerationConfig = {
+        temperature: 0.7,
+        topP: 1,
+        topK: 1,
+        maxOutputTokens: 2048,
+      };
+
+      const parts = [
+        { text: prompt },
+      ];
+      
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts }],
+        generationConfig,
+      });
+
+      const response = result.response;
+      return response.text();
     } catch (error) {
       console.error("Gemini API Error:", error);
       return "Maaf, terjadi kesalahan saat menghubungi asisten AI. Silakan coba lagi nanti.";
@@ -28,4 +40,11 @@ export class GeminiService {
   }
 }
 
-export const geminiService = new GeminiService();
+// Mengambil API key dari environment variables
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  throw new Error("GEMINI_API_KEY is not defined in environment variables.");
+}
+
+export const geminiService = new GeminiService(apiKey);

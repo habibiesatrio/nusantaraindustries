@@ -12,6 +12,7 @@ export interface CommodityDerivative {
   level: string;
   product: string;
   valueAdded: string;
+  subProducts?: CommodityDerivative[];
 }
 
 export interface CommodityData {

@@ -1,5 +1,5 @@
 
-import { CommodityData, PSNProject } from './types';
+import { CommodityData, PSNProject } from '@/types';
 
 export const COMMODITIES: CommodityData[] = [
   {
@@ -12,9 +12,28 @@ export const COMMODITIES: CommodityData[] = [
     processedExport: 32.6,
     year: 2023,
     derivatives: [
-      { level: 'Hulu', product: 'Bijih Nikel', valueAdded: '1x' },
-      { level: 'Antara', product: 'Nikel Matte / MHP', valueAdded: '6x' },
-      { level: 'Hilir', product: 'Katoda Baterai / Sel Baterai', valueAdded: '18x' }
+      {
+        level: 'Hulu',
+        product: 'Bijih Nikel (Ore)',
+        valueAdded: '1x',
+        subProducts: [
+          { level: 'Hulu', product: 'Saprolite Ore (High-Grade)', valueAdded: '', subProducts: [
+            { level: 'Antara', product: 'Ferronickel (FeNi)', valueAdded: '6x' },
+            { level: 'Antara', product: 'Nickel Pig Iron (NPI)', valueAdded: '5x', subProducts: [
+              { level: 'Hilir', product: 'Stainless Steel', valueAdded: '10x' }
+            ]}
+          ]},
+          { level: 'Hulu', product: 'Limonite Ore (Low-Grade)', valueAdded: '', subProducts: [
+            { level: 'Antara', product: 'Mixed Hydroxide Precipitate (MHP)', valueAdded: '8x', subProducts: [
+              { level: 'Hilir', product: 'Nickel Sulphate', valueAdded: '15x', subProducts: [
+                { level: 'Hilir', product: 'Prekursor Katoda', valueAdded: '18x', subProducts: [
+                  { level: 'Hilir', product: 'Sel Baterai EV', valueAdded: '20x' }
+                ]}
+              ]}
+            ]}
+          ]}
+        ]
+      }
     ]
   },
   {

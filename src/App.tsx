@@ -53,7 +53,7 @@ const App: React.FC = () => {
         return <Dashboard />;
       case Page.ExportImport:
         return (
-          <div className="space-y-8">
+          <div className="space-y-8 animate-in fade-in duration-500">
              <div className="flex justify-between items-end">
               <div>
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Database Komoditas</h1>

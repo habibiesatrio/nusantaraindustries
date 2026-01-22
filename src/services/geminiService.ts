@@ -1,4 +1,3 @@
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export class GeminiService {
@@ -11,10 +10,10 @@ export class GeminiService {
       // Inisialisasi klien tepat sebelum panggilan API untuk memastikan penggunaan kunci API terbaru.
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
-        throw new Error("VITE_GEMINI_API_KEY is not set in .env file");
+        throw new Error("VITE_GEMINI_API_KEY is not set in .env file. Please add it to your .env file.");
       }
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
       const result = await model.generateContent(prompt);
       const response = await result.response;

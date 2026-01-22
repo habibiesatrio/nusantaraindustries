@@ -44,7 +44,7 @@ const App: React.FC = () => {
   }
 
   if (currentPage === Page.Login) {
-    return <Login onLogin={handleLoginSuccess} />;
+    return <Login onLogin={handleLoginSuccess} onBack={() => setCurrentPage(Page.Landing)} />;
   }
 
   const renderContent = () => {

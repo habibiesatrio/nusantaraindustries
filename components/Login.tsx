@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Mail, Lock, LogIn, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 interface LoginProps {
   onLogin: () => void;
+  onBack: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,7 +57,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       {/* Right side: Form */}
       <div className="w-full lg:w-1/2 bg-slate-50 flex items-center justify-center p-8">
         <div className="max-w-md w-full">
-          <div className="text-center mb-10">
+          <div className="relative text-center mb-10">
+            <button 
+              onClick={onBack} 
+              className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-12 h-12 bg-slate-200/50 hover:bg-slate-200 rounded-full transition-colors"
+            >
+              <ArrowLeft className="text-slate-600" size={20} />
+            </button>
             <div className="lg:hidden flex justify-center mb-6">
               <div className="w-12 h-12 bg-blue-900 rounded-xl flex items-center justify-center text-white">
                 <span className="font-bold text-xl">NI</span>

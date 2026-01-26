@@ -40,11 +40,11 @@ export class GeminiService {
   }
 }
 
-// Mengambil API key dari environment variables
-const apiKey = process.env.GEMINI_API_KEY;
+// Mengambil API key dari environment variables Vite
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!apiKey) {
-  throw new Error("GEMINI_API_KEY is not defined in environment variables.");
+  throw new Error("VITE_GEMINI_API_KEY is not defined in .env file.");
 }
 
 export const geminiService = new GeminiService(apiKey);

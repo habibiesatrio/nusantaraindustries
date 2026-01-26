@@ -3,6 +3,7 @@ export enum Page {
   Landing = 'landing',
   Login = 'login',
   Dashboard = 'dashboard',
+  PohonIndustri = 'pohon-industri',
   ExportImport = 'export-import',
   InfoCenter = 'info-center',
   AIConsultant = 'ai-consultant'

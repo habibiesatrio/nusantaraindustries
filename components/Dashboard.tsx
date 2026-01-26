@@ -20,12 +20,17 @@ import {
 } from 'recharts';
 import { EXPORT_DATA } from '@/constants';
 
-const StatsCard: React.FC<{ 
-  title: string, 
-  value: string, 
-  trend: string, 
+import {
+  GitMerge,
+} from 'lucide-react';
+import { Page } from '@/types';
+
+const StatsCard: React.FC<{
+  title: string,
+  value: string,
+  trend: string,
   isPositive: boolean,
-  icon: React.ReactNode 
+  icon: React.ReactNode
 }> = ({ title, value, trend, isPositive, icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
     <div className="flex justify-between items-start mb-4">
@@ -48,7 +53,7 @@ interface ExportData {
   processedExport: number;
 }
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<{ setPage: (page: Page) => void }> = ({ setPage }) => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-end">
@@ -63,21 +68,21 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatsCard 
+        <StatsCard
           title="Total Nilai Tambah Hilirisasi"
           value="US$ 33.8 Miliar"
           trend="+24.5%"
           isPositive={true}
           icon={<Activity size={24} />}
         />
-        <StatsCard 
+        <StatsCard
           title="Volume Ekspor Olahan"
           value="14.2 Juta Ton"
           trend="+18.2%"
           isPositive={true}
           icon={<Ship size={24} />}
         />
-        <StatsCard 
+        <StatsCard
           title="Investasi Smelter"
           value="Rp 128 Triliun"
           trend="-2.1%"
@@ -101,8 +106,8 @@ const Dashboard: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
-                <Tooltip 
-                  cursor={{fill: '#f8fafc'}}
+                <Tooltip
+                  cursor={{ fill: '#f8fafc' }}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
                 <Legend iconType="circle" />
@@ -123,8 +128,8 @@ const Dashboard: React.FC = () => {
                   <span className="text-slate-500">{Math.round((item.processedExport / (item.processedExport + item.rawExport)) * 100)}% Rasio Hilirisasi</span>
                 </div>
                 <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-600 rounded-full" 
+                  <div
+                    className="h-full bg-blue-600 rounded-full"
                     style={{ width: `${(item.processedExport / (item.processedExport + item.rawExport)) * 100}%` }}
                   ></div>
                 </div>
@@ -135,6 +140,17 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
+       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-500/50 transition-colors group">
+        <button onClick={() => setPage(Page.PohonIndustri)} className="w-full text-left">
+          <div className="flex justify-between items-start mb-4">
+            <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+              <GitMerge size={24} />
+            </div>
+          </div>
+          <h3 className="text-slate-500 text-sm font-medium mb-1 group-hover:text-blue-600">Pohon Industri</h3>
+          <p className="text-2xl font-bold text-slate-900 group-hover:text-blue-800">Visualisasikan Rantai Pasok</p>
+        </button>
       </div>
     </div>
   );

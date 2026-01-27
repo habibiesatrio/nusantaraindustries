@@ -5,7 +5,8 @@ export enum Page {
   Dashboard = 'dashboard',
   ExportImport = 'export-import',
   InfoCenter = 'info-center',
-  AIConsultant = 'ai-consultant'
+  AIConsultant = 'ai-consultant',
+  PohonIndustri = 'pohon-industri'
 }
 
 export interface CommodityDerivative {

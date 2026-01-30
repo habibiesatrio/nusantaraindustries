@@ -1,102 +1,130 @@
-import React, { memo, useState, useMemo } from 'react';
+import React, { memo, useState } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Save, Layers, Calculator, Trash2, CheckCircle2, Clock, Zap, Target } from 'lucide-react';
+import { Save, Trash2, Database, Share2, Plus, Link, ChevronRight, ChevronLeft, ArrowUpRight, ArrowDownLeft, Info, Layers } from 'lucide-react';
 
-const EditableNode = ({ id, data }) => {
-  const stopKey = (e) => e.stopPropagation();
-  const isSaved = data.status === 'saved';
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  
-  const filteredRegistry = useMemo(() => {
-    const search = (data.Parent_ID || "").toLowerCase();
-    if (!search || search === 'root' || !data.registry) return [];
-    return data.registry.filter(item => item.Harmony_ID?.toLowerCase().includes(search) || item.Product_Name?.toLowerCase().includes(search)).slice(0, 5);
-  }, [data.Parent_ID, data.registry]);
+const EditableNode = ({ data, id }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [manualID, setManualID] = useState("");
 
-  // UX HELPER: Jika user klik input yang nilainya 0, kosongkan agar bersih
-  const handleFocus = (e) => {
-    if (e.target.value === "0") {
-        e.target.value = "";
-    }
-  };
+    const onChange = (e) => data.onInputChange(id, e.target.name, e.target.value);
+    const parents = data.Parents || [];
+    
+    const handleRemove = (hid) => data.onUpdateParents(parents.filter(p => p.Harmony_ID !== hid));
+    const handleAdd = () => { 
+        if (manualID) {
+            data.onUpdateParents([...parents, { Harmony_ID: manualID, Process_Name: "" }]); 
+            setManualID(""); 
+        }
+    };
 
-  return (
-    <div className={`bg-white border-2 p-10 w-[600px] shadow-2xl rounded-[2.5rem] nowheel transition-all duration-500 ${isSaved ? 'border-emerald-400' : 'border-dashed border-sky-400'}`}>
-      <Handle type="target" position={Position.Left} className="w-4 h-4 bg-sky-400 border-4 border-white shadow-md" />
-      
-      <div className="flex justify-between mb-8 border-b border-sky-50 pb-6 cursor-grab">
-        <div className="flex items-center gap-3 text-sky-600">
-          <div className={`p-2 rounded-xl shadow-sm ${isSaved ? 'bg-emerald-50 text-emerald-600' : 'bg-sky-50'}`}><Layers size={22} /></div>
-          <h3 className="text-sm font-black uppercase tracking-widest">Industrial Node Registry</h3>
-        </div>
-        <div className="flex items-center gap-2">
-            <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase flex items-center gap-1.5 shadow-sm ${isSaved ? 'bg-emerald-50 text-emerald-600' : 'bg-sky-50 text-sky-600'}`}>
-                {isSaved ? <CheckCircle2 size={12}/> : <Clock size={12}/>} {isSaved ? 'Synchronized' : 'Draft'}
-            </span>
-            <button onClick={data.onDelete} className="nodrag p-2 text-slate-300 hover:text-rose-500 transition-colors"><Trash2 size={16} /></button>
-        </div>
-      </div>
+    return (
+        <div className="relative flex items-start">
+            <div className={`w-80 bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-2 ${data.status === 'saved' ? 'border-green-500' : 'border-amber-400'} overflow-hidden z-10`}>
+                <Handle type="target" position={Position.Left} className="!w-5 !h-5 !bg-sky-500 !border-4 !border-white" />
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="col-span-2 space-y-4">
-            <div className="relative">
-              <label className="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-1 flex items-center gap-2"><Target size={12} className="text-sky-500" /> Parent Harmony ID</label>
-              <input type="text" className="nodrag w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold focus:ring-4 focus:ring-sky-50 transition-all shadow-inner" 
-                placeholder="Search HS Code..." value={data.Parent_ID || ''} onKeyDown={stopKey} onFocus={() => setShowSuggestions(true)} onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                onChange={(e) => data.onInputChange(id, 'Parent_ID', e.target.value)} />
-              
-              {showSuggestions && filteredRegistry.length > 0 && (
-                <div className="absolute z-[200] w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2">
-                    {filteredRegistry.map((item) => (
-                        <button key={item.Harmony_ID} onClick={() => data.onInputChange(id, 'Parent_ID', item.Harmony_ID)} className="w-full p-4 text-left hover:bg-sky-50 flex items-center justify-between border-b border-slate-50 last:border-0 transition-colors">
-                            <div><p className="text-[10px] font-black text-slate-800 uppercase">{item.Product_Name}</p><p className="text-[8px] font-bold text-sky-600 font-mono">{item.Harmony_ID}</p></div>
-                            <span className="text-[8px] font-black bg-slate-100 px-2 py-1 rounded text-slate-400">MULTIPLIER: {Number(item.Origin_Score_Value || 0).toFixed(2)}x</span>
+                {/* HEADER */}
+                <div className="bg-slate-50/50 p-5 flex flex-col gap-4 border-b border-slate-100">
+                    <div className="flex justify-between items-center">
+                        <span className={`text-[8px] font-black uppercase px-3 py-1.5 rounded-full text-white ${data.status === 'saved' ? 'bg-green-500' : 'bg-amber-500'}`}>
+                            {data.status === 'saved' ? 'Synced' : 'Draft Mode'}
+                        </span>
+                        <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center gap-2 text-[9px] font-black text-sky-600 uppercase hover:bg-white px-4 py-2 rounded-2xl border border-transparent hover:border-sky-100 shadow-sm bg-white transition-all">
+                            <Share2 size={12} /> Relations ({parents.length})
+                            {isExpanded ? <ChevronLeft size={12}/> : <ChevronRight size={12}/>}
                         </button>
-                    ))}
-                </div>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-                <div><label className="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-1">Product Name</label>
-                  <input type="text" className="nodrag w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold" value={data.Product_Name || ''} onKeyDown={stopKey} onChange={(e) => data.onInputChange(id, 'Product_Name', e.target.value)} /></div>
-                <div><label className="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-1">Harmony ID (Unique)</label>
-                  <input type="text" className="nodrag w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold" value={data.Harmony_ID || ''} onKeyDown={stopKey} onChange={(e) => data.onInputChange(id, 'Harmony_ID', e.target.value)} /></div>
-            </div>
-        </div>
-
-        <div className="col-span-2 bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                <div className="flex items-center gap-2 text-slate-600 font-black text-[10px] uppercase tracking-widest"><Calculator size={16} /> Value-Added Score</div>
-                <div className="bg-sky-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-lg shadow-sky-100">
-                    <Zap size={10} fill="white" /><span className="text-[10px] font-black tracking-tighter">LOCAL STEP: {Number(data.Step_Score_Value || 0).toFixed(6)}</span>
-                </div>
-            </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                {/* INPUT NUMERIK DENGAN UX PEMBERSIHAN NOL */}
-                {['Upstream_Export', 'Upstream_Import', 'Downstream_Export', 'Downstream_Import', 'Step_Score_Coefficient', 'Origin_Score_Value'].map(f => (
-                    <div key={f}><label className="text-[8px] font-black text-slate-400 uppercase mb-1 block">{f.replace(/_/g, ' ')}</label>
-                        <input 
-                            type="number" 
-                            step="0.00001" 
-                            className="nodrag w-full p-3 bg-white border border-slate-200 rounded-xl text-xs font-bold shadow-sm" 
-                            value={data[f] ?? 0} 
-                            onKeyDown={stopKey} 
-                            onFocus={handleFocus} // FIX UX: Kosongkan jika 0 saat diklik
-                            onChange={(e) => data.onInputChange(id, f, e.target.value)} 
-                        />
                     </div>
-                ))}
-            </div>
-        </div>
-      </div>
 
-      <button onClick={data.onSave} className={`nodrag w-full mt-10 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.3em] transition-all active:scale-95 flex items-center justify-center gap-3 shadow-2xl ${isSaved ? 'bg-emerald-600 text-white' : 'bg-slate-900 text-white hover:bg-sky-600'}`}>
-        <Save size={18} /> {isSaved ? 'Synchronize All Tiers' : 'Finalize Production Node'}
-      </button>
-      <Handle type="source" position={Position.Right} className="w-4 h-4 bg-sky-400 border-4 border-white shadow-md" />
-    </div>
-  );
+                    <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200">
+                        <Layers size={14} className="text-sky-500" />
+                        <select name="Tier" value={data.Tier} onChange={onChange} className="w-full text-[10px] font-bold text-slate-600 outline-none">
+                            <option value="Tier 0 (SDA)">Tier 0 (Sumber Daya Alam)</option>
+                            <option value="Tier 1 (Peleburan)">Tier 1 (Bijih - Peleburan)</option>
+                            <option value="Tier 2 (Pemurnian)">Tier 2 (Pemurnian)</option>
+                            <option value="Tier 3 (Intermediate)">Tier 3 (Intermediate)</option>
+                            <option value="Tier 4 (Pembentukan)">Tier 4 (Pembentukan)</option>
+                            <option value="Tier 5 (Barang Jadi)">Tier 5 (Barang Jadi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                {/* FORM CONTENT */}
+                <div className="p-6 space-y-4">
+                    <div className="flex gap-3">
+                        <div className="flex-1">
+                            <label className="text-[8px] font-black text-slate-400 uppercase mb-1 block">HS Code</label>
+                            <input name="HS_Code" value={data.HS_Code} onChange={onChange} className="w-full text-xs font-bold p-3 bg-slate-50 rounded-xl outline-none" />
+                        </div>
+                        <div className="flex-[2]">
+                            <label className="text-[8px] font-black text-slate-400 uppercase mb-1 block">Product Name</label>
+                            <input name="Product_Name" value={data.Product_Name} onChange={onChange} className="w-full text-xs font-bold p-3 bg-slate-50 rounded-xl outline-none" />
+                        </div>
+                    </div>
+
+                    <div className="bg-slate-100/50 p-2 rounded-xl flex items-center gap-2 border border-slate-100">
+                        <Database size={12} className="text-slate-400" />
+                        <span className="text-[9px] font-mono text-slate-500 truncate">{data.Harmony_ID || "ID..."}</span>
+                    </div>
+
+                    <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-center">
+                        <label className="text-[8px] font-black text-emerald-600 uppercase block mb-1">Market Value Tech</label>
+                        <input type="number" step="0.01" name="Market_Value_Technology" value={data.Market_Value_Technology} onChange={onChange} className="w-full bg-transparent font-black text-emerald-800 outline-none text-2xl text-center" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-blue-50/50 p-3 rounded-2xl border border-blue-100">
+                            <label className="text-[8px] font-black text-blue-600 uppercase block mb-1">Export</label>
+                            <input type="number" name="Export_Value" value={data.Export_Value} onChange={onChange} className="w-full bg-transparent text-xs font-bold text-blue-800 outline-none" />
+                        </div>
+                        <div className="bg-orange-50/50 p-3 rounded-2xl border border-orange-100">
+                            <label className="text-[8px] font-black text-orange-600 uppercase block mb-1">Import</label>
+                            <input type="number" name="Import_Value" value={data.Import_Value} onChange={onChange} className="w-full bg-transparent text-xs font-bold text-orange-800 outline-none" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="text-[8px] font-black text-slate-400 uppercase block mb-1">Deskripsi</label>
+                        <textarea name="Desc" value={data.Desc} onChange={onChange} rows="2" className="w-full text-[11px] p-3 bg-slate-50 rounded-xl outline-none resize-none" placeholder="Isi deskripsi..."></textarea>
+                    </div>
+                </div>
+
+                {/* ACTIONS */}
+                <div className="p-5 border-t bg-white flex gap-3">
+                    <button onClick={data.onDelete} className="p-4 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"><Trash2 size={22}/></button>
+                    <button onClick={data.onSave} className="flex-1 bg-sky-600 text-white rounded-2xl text-[10px] font-black py-5 uppercase tracking-widest hover:bg-sky-700 shadow-lg shadow-sky-100 active:scale-95">
+                        <Save size={18} className="inline mr-2"/> Sync DB
+                    </button>
+                </div>
+
+                <Handle type="source" position={Position.Right} className="!w-5 !h-5 !bg-sky-500 !border-4 !border-white" />
+            </div>
+
+            {/* SIDEBAR RELATION (Samping Kanan) */}
+            {isExpanded && (
+                <div className="ml-3 w-72 bg-white/95 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-200 p-7 animate-in slide-in-from-left-5 duration-300 self-stretch flex flex-col z-0">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-5">Parents Network</h4>
+                    <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+                        {parents.map((p, idx) => (
+                            <div key={idx} className="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                                <span className="truncate w-40 font-mono text-[9px] font-bold text-slate-500">{p.Harmony_ID}</span>
+                                {/* TOMBOL HAPUS RELASI (UNLINK) */}
+                                <button 
+                                    onClick={() => handleRemove(p.Harmony_ID)} 
+                                    className="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded-full transition-all"
+                                >
+                                    <Link size={14} className="rotate-45" />
+                                </button>
+                            </div>
+                        ))}
+                        {parents.length === 0 && <p className="text-[10px] text-slate-300 italic py-10 text-center">Root Node</p>}
+                    </div>
+                    <div className="mt-5 flex gap-2 pt-5 border-t">
+                        <input value={manualID} onChange={(e) => setManualID(e.target.value)} placeholder="Parent ID..." className="flex-1 text-[10px] p-3 rounded-xl border bg-white outline-none ring-sky-500/20 focus:ring-2" />
+                        <button onClick={handleAdd} className="bg-sky-600 text-white p-3 rounded-xl hover:bg-sky-700 transition-all shadow-lg shadow-sky-100"><Plus size={18}/></button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 };
 
 export default memo(EditableNode);

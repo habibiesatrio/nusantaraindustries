@@ -118,7 +118,7 @@ const PohonIndustriContent = () => {
     const toggleViewMode = () => setViewMode(prev => prev === 'readonly' ? 'edit' : 'readonly');
 
     // 2. TREE BUILDER ENGINE (THE BRAIN)
-    const buildTreeLogic = useCallback((selectedProduct, customLevels = null) => {
+    const buildTreeLogic = useCallback((selectedProduct, customLevels = null, forceFocus = false) => {
         if (!selectedProduct?.dbKey) return;
         
         setActiveRootId(selectedProduct.dbKey);
@@ -249,9 +249,18 @@ const PohonIndustriContent = () => {
         setSearchTerm("");
         
         // Auto Center Animation (hanya jika reset total)
-        if (!customLevels) {
-             setTimeout(() => { const t = finalNodes.find(n => n.id === centerId); if (t) setCenter(t.position.x + 180, t.position.y, { zoom: 0.75, duration: 1000 }); }, 200);
-        }
+        // if (!customLevels) {
+        //      setTimeout(() => { const t = finalNodes.find(n => n.id === centerId); if (t) setCenter(t.position.x + 180, t.position.y, { zoom: 0.75, duration: 1000 }); }, 200);
+        // }
+
+        if (!customLevels || forceFocus) {
+            setTimeout(() => { 
+                const t = finalNodes.find(n => n.id === centerId); 
+                if (t) {
+                    setCenter(t.position.x + 180, t.position.y, { zoom: 0.75, duration: 1000 }); 
+                }
+            }, 200);
+       }
 
     }, [allData, viewMode, upstreamLevels, setCenter, setNodes, setEdges]); 
 
@@ -403,7 +412,7 @@ const PohonIndustriContent = () => {
                             {searchTerm && filteredItems.slice(0, 50).map(item => (
                                 <button key={item.dbKey} onClick={() => {
                                     setUpstreamLevels({ [item.dbKey]: 1 }); // Reset to 1 level back
-                                    buildTreeLogic(item, { [item.dbKey]: 1 });
+                                    buildTreeLogic(item, { [item.dbKey]: 1 }, true);
                                 }} className="w-full text-left p-3 rounded-xl hover:bg-sky-50 group transition-all border border-transparent hover:border-sky-100">
                                     <p className="text-[10px] font-black text-slate-700 uppercase leading-none group-hover:text-sky-700">{item.Identity?.Product_Name}</p>
                                     <p className="text-[8px] font-bold text-slate-400 mt-1 uppercase">HS {item.Identity?.HS_Code}</p>

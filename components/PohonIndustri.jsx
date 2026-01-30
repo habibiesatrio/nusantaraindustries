@@ -70,7 +70,10 @@ const PohonIndustriContent = () => {
     const [selectedPopUp, setSelectedPopUp] = useState(null);
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+<<<<<<< HEAD
     const [viewMode, setViewMode] = useState('readonly'); // 'readonly' | 'edit'
+=======
+>>>>>>> 9b728d48809c94c7a22d9c822ea66553d1859532
 
     // 1. ENGINE: Sinkronisasi User & RTDB
     useEffect(() => {

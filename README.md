@@ -1,17 +1,20 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Pohon Industri Indonesia
 
-# Run and deploy your AI Studio app
+Landing page untuk portal Pohon Industri Indonesia yang dikembangkan oleh BRIN (Badan Riset dan Inovasi Nasional)..
 
-This contains everything you need to run your app locally.
+## Deskripsi
 
-View your app in AI Studio: https://ai.studio/apps/drive/1A19zrxcMUy-1534Rr37eFq6iCFPEUHla
+Aplikasi web ini menyediakan tracer hilirisasi komoditas nasional, memetakan pohon industri dari bahan mentah hingga produk bernilai tambah tinggi berdasarkan dataset BRIN.
 
-## Run Locally
+## Fitur
 
-**Prerequisites:**  Node.js
+- **Pencarian HS Code**: Cari komoditas berdasarkan kode HS atau nama.
+- **Visualisasi Pohon Industri**: Lihat rantai nilai hilirisasi komoditas.
+- **Data Tren Ekspor**: Grafik pertumbuhan nilai ekspor per tahun.
+- **Informasi Paten**: Data inovasi dan hak kekayaan intelektual.
+- **Validasi Regulasi**: Informasi kepatuhan dan regulasi hilirisasi.
 
+## Teknologi
 
 1. Install dependencies:
    `npm install`

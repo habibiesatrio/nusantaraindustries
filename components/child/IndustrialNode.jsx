@@ -96,12 +96,24 @@ const IndustrialNode = ({ data }) => {
                     </div>
                 )}
             </div>
-
             {/* EDIT MODE CONTROLS */}
-            {viewMode === 'edit' && (
-                <div className="mt-3 pt-3 border-t border-dashed border-slate-200 flex justify-end gap-2">
-                    <button onClick={(e) => { e.stopPropagation(); data.onEdit(data); }} className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded text-[9px] font-bold hover:bg-yellow-200 flex items-center gap-1"><Edit3 size={10}/> EDIT</button>
-                    <button onClick={(e) => { e.stopPropagation(); data.onDelete(data); }} className="px-3 py-1 bg-red-100 text-red-700 rounded text-[9px] font-bold hover:bg-red-200 flex items-center gap-1"><Trash2 size={10}/> DEL</button>
+            {(viewMode === 'edit') && (
+                <div className="flex justify-end gap-2 pt-3 mt-2 border-t border-dashed border-slate-200">
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); data.onEdit(data); }} 
+                        className="px-2 py-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 border border-amber-200 flex items-center gap-1 transition-all"
+                        title="Edit Values"
+                    >
+                        <Edit3 size={10} strokeWidth={2.5}/> <span className="text-[9px] font-bold uppercase">Edit</span>
+                    </button>
+                    
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); data.onDelete(data); }} 
+                        className="px-2 py-1.5 bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 border border-rose-200 flex items-center gap-1 transition-all"
+                        title="Delete Node"
+                    >
+                        <Trash2 size={10} strokeWidth={2.5}/> <span className="text-[9px] font-bold uppercase">Del</span>
+                    </button>
                 </div>
             )}
         </div>
@@ -114,6 +126,7 @@ const IndustrialNode = ({ data }) => {
           <button onClick={(e) => { e.stopPropagation(); data.onExpandChildren(nodeId); }} className="bg-white border-2 border-emerald-500 shadow-xl rounded-full p-1.5 hover:bg-emerald-500 hover:text-white transition-all active:scale-90"><Plus size={14} strokeWidth={4} /></button>
           <button onClick={(e) => { e.stopPropagation(); data.onHideChildren(nodeId); }} className="bg-white border-2 border-slate-300 shadow-xl rounded-full p-1.5 hover:bg-slate-500 hover:text-white transition-all active:scale-90"><Minus size={14} strokeWidth={4} /></button>
       </div>
+
     </div>
   );
 };

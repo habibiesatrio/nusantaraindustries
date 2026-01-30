@@ -1,116 +1,121 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
-import { Plus, Minus, Zap, Layers, ArrowUp, ArrowDown } from 'lucide-react';
+import { 
+    Plus, Minus, Zap, Layers, ArrowUpRight, ArrowDownLeft, 
+    Database, Globe, Edit3, Trash2 
+} from 'lucide-react';
 
 const IndustrialNode = ({ data }) => {
-  const isFinal = data.Tier?.includes('Tier 5');
-  const isRaw = data.Tier?.includes('Tier 1');
-  const headerColor = isRaw ? 'bg-emerald-500' : (isFinal ? 'bg-orange-500' : 'bg-blue-500');
+  // 1. DESTRUCTURING DATA
+  const { 
+      dbKey, Identity = {}, Market_Metrics = {}, Live_Metrics = {}, 
+      Hierarchy = {}, viewMode = 'readonly',
+      calculatedMultiplier // Dikirim dari parent hasil perhitungan real-time
+  } = data;
+  
+  const nodeId = dbKey || Identity.Harmony_ID;
+  const isRaw = Identity.Tier?.includes('Tier 1');
+  const headerColor = isRaw ? 'bg-emerald-600' : (Identity.Tier?.includes('Tier 5') ? 'bg-orange-600' : 'bg-blue-600');
+  const rawMaterial = Hierarchy.Parents?.[0]?.Harmony_ID?.split('_')[1] || "Origin";
+
+  // 2. DATA COMPARISON LOGIC
+  const dbExport = Market_Metrics.Downstream_Export || Market_Metrics.Export_Value || 0;
+  const dbImport = Market_Metrics.Downstream_Import || Market_Metrics.Import_Value || 0;
+  
+  const liveExport = Live_Metrics.totalExport || 0;
+  const liveImport = Live_Metrics.totalImport || 0;
+  const hasLiveData = Live_Metrics.fetched === true;
 
   return (
-    <div className="relative group">
-      {/* TOMBOL KIRI: EXPAND/HIDE PARENT (HULU) */}
+    <div className={`relative group font-sans ${viewMode === 'edit' ? 'hover:ring-4 hover:ring-yellow-400/50' : ''}`}>
+      
+      {/* --- CONTROLS KIRI (HULU) --- */}
       <div className="absolute left-[-25px] top-1/2 -translate-y-1/2 flex flex-col gap-2 z-[100]">
-          <button 
-            onClick={(e) => { e.stopPropagation(); data.onExpandParent(data.Harmony_ID); }}
-            className="bg-white border-2 border-red-500 shadow-xl rounded-full p-1.5 hover:bg-red-500 hover:text-white text-red-500 transition-all hover:scale-110 active:scale-90"
-            title="Expand Parents"
-          >
-            <Plus size={14} strokeWidth={4} />
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); data.onHideParent(data.Harmony_ID); }}
-            className="bg-white border-2 border-slate-300 shadow-xl rounded-full p-1.5 hover:bg-slate-500 hover:text-white text-slate-400 transition-all hover:scale-110 active:scale-90"
-            title="Hide Parents"
-          >
-            <Minus size={14} strokeWidth={4} />
-          </button>
+          <button onClick={(e) => { e.stopPropagation(); data.onExpandParent(nodeId); }} className="bg-white border-2 border-red-500 shadow-xl rounded-full p-1.5 hover:bg-red-500 hover:text-white transition-all active:scale-90"><Plus size={14} strokeWidth={4} /></button>
+          <button onClick={(e) => { e.stopPropagation(); data.onHideParent(nodeId); }} className="bg-white border-2 border-slate-300 shadow-xl rounded-full p-1.5 hover:bg-slate-500 hover:text-white transition-all active:scale-90"><Minus size={14} strokeWidth={4} /></button>
       </div>
 
-      {/* KOTAK UTAMA */}
+      {/* --- MAIN CARD --- */}
       <div 
-        onClick={(e) => { e.stopPropagation(); data.onToggleExpand(data.Harmony_ID); }}
-        className={`
-          bg-white border-2 border-slate-100 shadow-xl rounded-2xl overflow-hidden 
-          transition-all duration-500 ease-in-out cursor-pointer
-          ${data.isExpanded ? 'w-[320px]' : 'w-[240px]'}
-          hover:border-red-500 hover:ring-4 hover:ring-red-500/20 hover:z-50
-        `}
+        onClick={(e) => { e.stopPropagation(); data.onToggleExpand(nodeId); }}
+        className={`bg-white border-2 ${hasLiveData ? 'border-blue-400' : 'border-slate-100'} shadow-xl rounded-2xl overflow-hidden transition-all duration-500 w-[300px] hover:shadow-2xl cursor-pointer`}
       >
         <Handle type="target" position={Position.Left} className="opacity-0" />
         
-        <div className={`text-[8px] font-black px-4 py-1.5 uppercase tracking-widest text-white ${headerColor}`}>
-          {isRaw ? "RAW MATERIAL" : isFinal ? "FINAL PRODUCT" : "INTERMEDIATE PRODUCT"}
+        {/* HEADER */}
+        <div className={`px-4 py-2 flex justify-between items-center text-white ${headerColor}`}>
+            <span className="text-[9px] font-black uppercase tracking-widest">{Identity.Tier ? Identity.Tier.split('(')[0] : 'TIER X'}</span>
+            <div className="flex gap-2">
+                {viewMode === 'edit' && <Edit3 size={12} className="text-white/80" />}
+                <Layers size={12} />
+            </div>
         </div>
         
-        <div className="p-5">
-          <h4 className="text-[11px] font-black text-slate-800 uppercase leading-tight mb-2 tracking-tighter truncate">
-            {data.Product_Name}
-          </h4>
-          
-          <div className="flex flex-col gap-2">
-              <p className="text-[9px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg w-fit font-mono border border-slate-100">
-                  HS {data.Harmony_ID?.split('_')[0]}
-              </p>
-              <div className="flex items-center gap-1 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100 w-fit">
-                  <Zap size={10} className="text-indigo-600 fill-indigo-600" />
-                  <span className="text-[10px] font-black text-indigo-700">{Number(data.Origin_Score_Value).toFixed(2)}</span>
-              </div>
-          </div>
+        <div className="p-4">
+            {/* IDENTITY */}
+            <div className="flex justify-between items-start mb-2">
+                <div>
+                    <span className="text-[9px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">HS {Identity.HS_Code}</span>
+                    <h4 className="text-[13px] font-black text-slate-800 leading-tight mt-1 line-clamp-2">{Identity.Product_Name}</h4>
+                </div>
+                {/* Calculated Multiplier Badge */}
+                <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded border border-indigo-100">
+                        <Zap size={10} className="text-indigo-600 fill-indigo-600" />
+                        <span className="text-[10px] font-black text-indigo-700">{calculatedMultiplier?.score || "1.0"}x</span>
+                    </div>
+                    <span className="text-[7px] text-slate-400 mt-0.5">Calculated</span>
+                </div>
+            </div>
 
-          <div className={`overflow-hidden transition-all duration-500 ${data.isExpanded ? 'max-h-[300px] mt-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className="pt-4 border-t border-slate-100 space-y-3 font-sans">
-                  <div className="flex items-center gap-2 text-slate-400">
-                      <Layers size={12} />
-                      <p className="text-[9px] font-bold uppercase tracking-wider">{data.Tier}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                      <div className="p-2 bg-emerald-50 rounded-xl border border-emerald-100 text-center">
-                          <p className="text-[7px] font-black text-emerald-600 uppercase">Ekspor</p>
-                          <p className="text-[10px] font-black text-emerald-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">${Number(data.Downstream_Export).toLocaleString()}</p>
-                          <p className="text-[7px] text-gray-500 mt-2 italic">
-                            *Dihitung dari akumulasi {Number(data.Export_Countries)} negara pelapor di dunia
-                          </p>
-                      </div>
-                      <div className="p-2 bg-red-50 rounded-xl border border-red-100 text-center">
-                          <p className="text-[7px] font-black text-red-600 uppercase">Impor</p>
-                          <p className="text-[10px] font-black text-red-700 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">${Number(data.Downstream_Import).toLocaleString()}</p>
-                          <p className="text-[7px] text-gray-500 mt-2 italic">
-                            *Dihitung dari akumulasi {Number(data.Import_Countries)} negara pelapor di dunia
-                          </p>
-                      </div>
-                  </div>
-                  <div className="p-2.5 bg-slate-900 rounded-xl shadow-inner text-center">
-                      <p className="text-[7px] font-black text-slate-500 uppercase mb-1">Process Log</p>
-                      <p className="text-[9px] font-medium text-white leading-tight italic truncate">"{data.Process_Name}"</p>
-                  </div>
-              </div>
-          </div>
+            {/* DUAL METRICS DISPLAY */}
+            <div className={`grid ${hasLiveData ? 'grid-cols-2' : 'grid-cols-1'} gap-2 mt-3`}>
+                {/* Kolom 1: Database Metrics */}
+                <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
+                    <div className="flex items-center gap-1 mb-1 border-b border-slate-200 pb-1">
+                        <Database size={10} className="text-slate-400" />
+                        <span className="text-[8px] font-bold text-slate-500 uppercase">Internal DB</span>
+                    </div>
+                    <div className="space-y-1">
+                        <div className="flex justify-between text-[9px]"><span className="text-emerald-600">Exp:</span> <span className="font-bold">${Number(dbExport).toLocaleString()}</span></div>
+                        <div className="flex justify-between text-[9px]"><span className="text-rose-600">Imp:</span> <span className="font-bold">${Number(dbImport).toLocaleString()}</span></div>
+                    </div>
+                </div>
+
+                {/* Kolom 2: Live API Metrics (Hanya muncul jika expanded/fetched) */}
+                {hasLiveData && (
+                    <div className="bg-blue-50 p-2 rounded-lg border border-blue-100">
+                        <div className="flex items-center gap-1 mb-1 border-b border-blue-200 pb-1">
+                            <Globe size={10} className="text-blue-500" />
+                            <span className="text-[8px] font-bold text-blue-600 uppercase">Comtrade API</span>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[9px]"><span className="text-emerald-600">Exp:</span> <span className="font-bold">${Number(liveExport).toLocaleString()}</span></div>
+                            <div className="flex justify-between text-[9px]"><span className="text-rose-600">Imp:</span> <span className="font-bold">${Number(liveImport).toLocaleString()}</span></div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* EDIT MODE CONTROLS */}
+            {viewMode === 'edit' && (
+                <div className="mt-3 pt-3 border-t border-dashed border-slate-200 flex justify-end gap-2">
+                    <button onClick={(e) => { e.stopPropagation(); data.onEdit(data); }} className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded text-[9px] font-bold hover:bg-yellow-200 flex items-center gap-1"><Edit3 size={10}/> EDIT</button>
+                    <button onClick={(e) => { e.stopPropagation(); data.onDelete(data); }} className="px-3 py-1 bg-red-100 text-red-700 rounded text-[9px] font-bold hover:bg-red-200 flex items-center gap-1"><Trash2 size={10}/> DEL</button>
+                </div>
+            )}
         </div>
 
         <Handle type="source" position={Position.Right} className="opacity-0" />
       </div>
 
-      {/* TOMBOL KANAN: EXPAND/HIDE CHILDREN (HILIR) */}
+      {/* --- TOMBOL KANAN: NAVIGASI HILIR (CHILDREN) --- */}
       <div className="absolute right-[-25px] top-1/2 -translate-y-1/2 flex flex-col gap-2 z-[100]">
-          <button 
-            onClick={(e) => { e.stopPropagation(); data.onExpandChildren(data.Harmony_ID); }}
-            className="bg-white border-2 border-emerald-500 shadow-xl rounded-full p-1.5 hover:bg-emerald-500 hover:text-white text-emerald-500 transition-all hover:scale-125 active:scale-90"
-            title="Expand Children"
-          >
-            <Plus size={14} strokeWidth={4} />
-          </button>
-          <button 
-            onClick={(e) => { e.stopPropagation(); data.onHideChildren(data.Harmony_ID); }}
-            className="bg-white border-2 border-slate-300 shadow-xl rounded-full p-1.5 hover:bg-slate-500 hover:text-white text-slate-400 transition-all hover:scale-125 active:scale-90"
-            title="Hide Children"
-          >
-            <Minus size={14} strokeWidth={4} />
-          </button>
+          <button onClick={(e) => { e.stopPropagation(); data.onExpandChildren(nodeId); }} className="bg-white border-2 border-emerald-500 shadow-xl rounded-full p-1.5 hover:bg-emerald-500 hover:text-white transition-all active:scale-90"><Plus size={14} strokeWidth={4} /></button>
+          <button onClick={(e) => { e.stopPropagation(); data.onHideChildren(nodeId); }} className="bg-white border-2 border-slate-300 shadow-xl rounded-full p-1.5 hover:bg-slate-500 hover:text-white transition-all active:scale-90"><Minus size={14} strokeWidth={4} /></button>
       </div>
     </div>
   );
 };
-
 
 export default memo(IndustrialNode);
